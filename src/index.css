@@ -1,0 +1,54 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@400;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sora: "Sora", sans-serif;
+  --font-code: "Source Code Pro", monospace;
+  --font-grotesk: "Space Grotesk", sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+
+  @apply transition-colors duration-200;
+}
+
+.body {
+  width: 100vw;
+  height: 100vh;
+  @apply transition-colors duration-200;
+}
+
+table,
+tr,
+th,
+td {
+  border: 1px solid #000;
+  border-collapse: collapse;
+  padding: 0.5rem;
+}
+
+/* Add this CSS to your global styles or create a separate CSS file */
+.button-style {
+  display: flex;
+  justify-content: center;
+  font-weight: 500;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  gap: 30px;
+  transition: background-color 0.3s ease;
+}
+
+.button-style:hover {
+  background-color: #3367d6; /* Darker shade on hover */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+}

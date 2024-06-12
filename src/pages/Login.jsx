@@ -21,32 +21,36 @@ const Login = () => {
 
           <div className="form-body mb-6">
             <div className="mb-4">
-              <div className="flex items-center border rounded-md px-3 py-2 bg-gray-200">
-                <FaUser className="mr-2 text-gray-500" />
+              
+
+              <div className="flex items-center border border-gray-400 rounded-md px-3 py-2">
+                <FaUser className="mr-2" />
                 <input
-                  type="email"
+                  type="text"
                   placeholder="Email"
                   required
-                  className="bg-gray-200 text-gray-800 outline-none flex-grow placeholder-gray-500"
+                  className="outline-none flex-grow placeholder-black darkmode dark:placeholder-white p-1"
                   id="email"
                   name="email"
                   autoComplete="email"
                 />
               </div>
-            </div>
-            <div>
-              <div className="flex items-center border rounded-md px-3 py-2 bg-gray-200">
-                <FaLock className="mr-2 text-gray-500" />
+
+              <div className="flex items-center mt-6 border border-gray-400 rounded-md px-3 py-2">
+                <FaLock className="mr-2" />
                 <input
-                  type="password"
+                   type="password"
                   placeholder="Password"
                   required
-                  className="bg-gray-200 text-gray-800 outline-none flex-grow placeholder-gray-500"
+                  className="outline-none flex-grow placeholder-black darkmode dark:placeholder-white p-1"
                   id="password"
                   name="password"
                   autoComplete="current-password"
                 />
               </div>
+
+            </div>
+            <div>
             </div>
           </div>
           <button

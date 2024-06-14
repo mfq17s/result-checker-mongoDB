@@ -9,7 +9,7 @@ const ChangePassword = () => {
         theme === "dark" ? "dark" : "light"
       } flex justify-center items-center min-h-screen w-100% darkmode `}
     >
-      <div className="bg-white text-gray-800 p-6 border rounded-lg shadow-xl w-4/5 max-w-md sm:scale-100 scale-75 darkmode">
+      <div className="bg-white text-gray-800 p-6 border rounded-lg shadow-xl dark:shadow-white dark:shadow-inner w-4/5 max-w-md sm:scale-100 scale-75 darkmode">
         <h1 className="text-xl font-bold mb-4">Change Password</h1>
         <form>
           <div className="mb-4">

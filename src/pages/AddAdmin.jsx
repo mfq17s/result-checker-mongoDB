@@ -4,15 +4,13 @@ import { ThemeContext } from "../App";
 const AddAdmin = () => {
   const { theme } = useContext(ThemeContext);
   return (
-
-<div
+    <div
       className={`${
         theme === "dark" ? "dark" : "light"
       } flex justify-center items-center min-h-screen w-100% darkmode`}
     >
-    
-      <div className="bg-white text-gray-800 p-6 border rounded-lg shadow-xl w-4/5 max-w-md sm:scale-100 darkmode scale-75">
-        <h1 className="text-xl font-bold mb-4 text-center">Add Result</h1>
+      <div className="bg-white text-gray-800 p-6 dark:shadow-white dark:shadow-inner shadow-xl rounded-lg w-4/5 max-w-md sm:scale-100 darkmode scale-75">
+        <h1 className="text-xl font-bold mb-4 text-center">Add Admin</h1>
         <form>
           <div className="mb-4">
             <label htmlFor="email" className="block mb-2">
@@ -47,10 +45,7 @@ const AddAdmin = () => {
               required
             />
           </div>
-          <button
-            type="submit"
-            className="bg-blue-400 text-gray-800 hover:bg-blue-600 w-full py-2 rounded-md transition-colors duration-300"
-          >
+          <button type="submit" className="buttonStyle">
             Add Admin
           </button>
         </form>

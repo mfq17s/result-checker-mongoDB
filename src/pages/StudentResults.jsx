@@ -21,7 +21,7 @@ function StudentResults() {
       } sm:scale-100 scale-75 h-[100vh] darkmode`}
     >
       <div className="pt-15 pb-16 flex flex-col items-center justify-center darkmode">
-        <div ref={componentRef} className="w-4/6 shadow- px-4 py-6">
+        <div ref={componentRef} className="w-4/6 px-4 py-6">
           <h1 className="sr-only">Result Page</h1>
           {results.length > 0 ? (
             results.map((result) => (

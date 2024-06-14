@@ -21,7 +21,7 @@ const Results = () => {
         theme === "dark" ? "dark" : "light"
       } flex justify-center items-center min-h-screen w-100% bg-white darkmode`}
     >
-      <div className="bg-white text-gray-800 p-8 border rounded-lg shadow-xl w-full max-w-md darkmode  scale-75">
+      <div className="bg-white text-gray-800 p-8 border rounded-lg shadow-xl dark:shadow-white dark:shadow-inner w-full max-w-md darkmode  scale-75">
         <h1 className="text-xl font-bold mb-4 text-center">Add Result</h1>
         <form>
           <div className="mb-4">

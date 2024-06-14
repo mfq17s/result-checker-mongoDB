@@ -13,7 +13,7 @@ const Login = () => {
       } flex justify-center items-center min-h-screen w-100% darkmode`}
     >
 
-      <div className="p-8 border rounded-lg shadow-xl w-full max-w-md bg-white sm:scale-100 scale-75 darkmode">
+      <div className="p-8 border rounded-lg shadow-xl w-full max-w-md bg-white dark:shadow-white dark:shadow-inner sm:scale-100 scale-75 darkmode">
         <form className="form">
           <div className="form-header mb-6">
             <h1 className="text-2xl text-center font-bold">Admin Login</h1>

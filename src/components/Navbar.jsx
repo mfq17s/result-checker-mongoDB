@@ -74,6 +74,16 @@ const Navbar = () => {
           </div>
           <div className="space-x-6 flex items-center">
             <ThemeButton theme={theme} toggleTheme={toggleTheme} />
+            <li className="hoverStyle list-none hidden lg:block">
+              <Link
+                to="/"
+                onClick={toggleMenu}
+                className="logoutLink px-5 py-2"
+              >
+                Logout
+              </Link>
+            </li>
+
             <div className="lg:hidden">
               <button
                 onClick={toggleMenu}

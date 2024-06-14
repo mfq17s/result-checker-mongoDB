@@ -97,8 +97,11 @@ const Navbar = () => {
                   </li>
                 ))}
                 <li className="hoverStyle">
-                  <Link to="/" onClick={toggleMenu}
-                  className="logoutLink px-5 py-2">
+                  <Link
+                    to="/"
+                    onClick={toggleMenu}
+                    className="logoutLink px-5 py-2"
+                  >
                     Logout
                   </Link>
                 </li>

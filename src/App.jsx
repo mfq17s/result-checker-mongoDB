@@ -15,6 +15,7 @@ import StudentResults from "./pages/StudentResults";
 import AddAdmin from "./pages/AddAdmin";
 import { createContext } from "react";
 import { useState } from "react";
+import { Toaster } from "react-hot-toast";
 
 export const ThemeContext = createContext(null);
 
@@ -26,9 +27,11 @@ const App = () => {
   };
 
   return (
+
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <div className={`App ${theme === "dark" ? "dark" : ""}`} id="theme">
         <main className="darkmode">
+        <div><Toaster/></div>
           <Navbar theme={theme} toggleTheme={toggleTheme} />
             <Routes>
               <Route path="/" element={<Login />} />

@@ -1,15 +1,14 @@
+import { initializeApp } from "firebase/app";
+import { getAuth } from "firebase/auth";
 
-import { firebase } from "firebase/app";
-import "firebase/auth";
 const firebaseConfig = {
-  apiKey: "AIzaSyBd2l7jCJD1t7ciV9-2wPxnqvJJJ-uANz0",
-  authDomain: "result-checker-5b29d.firebaseapp.com",
-  projectId: "result-checker-5b29d",
-  storageBucket: "result-checker-5b29d.appspot.com",
-  messagingSenderId: "352242339768",
-  appId: "1:352242339768:web:256dc803491a66f110894d",
-  measurementId: "G-K7N5L51WFZ"
+  apiKey: "AIzaSyCZJbvFRnep1EG8gQmi-fzwwNplLUFhuXU",
+  authDomain: "resultchecker-590ae.firebaseapp.com",
+  projectId: "resultchecker-590ae",
+  storageBucket: "resultchecker-590ae.appspot.com",
+  messagingSenderId: "1005245606030",
+  appId: "1:1005245606030:web:0390d5599d9631f1ebc1df",
 };
 
-
-firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);

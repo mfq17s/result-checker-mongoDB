@@ -24,8 +24,8 @@ export const items = [
     href: "/ChangePassword",
   },
   {
-    label: "Add Admin",
-    href: "/AddAdmin",
+    label: "Admins",
+    href: "/Admins",
   },
 ];
 

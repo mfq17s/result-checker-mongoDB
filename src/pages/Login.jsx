@@ -2,7 +2,7 @@ import { FaUser, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { ThemeContext } from "../App";
-import { auth } from "../../firebase/firebase";
+import { auth } from "../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react";
 import toast from "react-hot-toast";
@@ -30,8 +30,8 @@ const Login = () => {
         success: (userCredential) => {
           const user = userCredential.user;
           console.log(user);
-          navigate("/Home"); 
-          return "Login successfull!";
+          navigate("/Home");
+          return "Login successfull";
         },
         error: (error) => {
           const errorCode = error.code;

@@ -12,7 +12,7 @@ import Results from "./pages/Results";
 import Login from "./pages/Login";
 import StudentLogin from "./pages/StudentLogin";
 import StudentResults from "./pages/StudentResults";
-import AddAdmin from "./pages/AddAdmin";
+import Admins from "./pages/Admins";
 import { createContext } from "react";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
@@ -28,27 +28,28 @@ const App = () => {
   };
 
   return (
-
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <div className={`App ${theme === "dark" ? "dark" : ""}`} id="theme">
         <main className="darkmode">
-        <div><Toaster/></div>
+          <div>
+            <Toaster />
+          </div>
           <Navbar theme={theme} toggleTheme={toggleTheme} />
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/Home" element={<Home />} />
-              <Route path="/changePassword" element={<ChangePassword />} />
-              <Route path="/Student" element={<Student />} />
-              <Route path="/Courses" element={<Courses />} />
-              <Route path="/Department" element={<Department />} />
-              <Route path="/StudentResults" element={<StudentResults />} />
-              <Route path="/AddAdmin" element={<AddAdmin />} />
-              <Route path="/Semester" element={<Semester />} />
-              <Route path="/Results" element={<Results />} />
-              <Route path="/Login" element={<Login />} />
-              <Route path="/ManageAdmin" element={<ManageAdmin />} />
-              <Route path="/StudentLogin" element={<StudentLogin />} />
-            </Routes>
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/Home" element={<Home />} />
+            <Route path="/changePassword" element={<ChangePassword />} />
+            <Route path="/Student" element={<Student />} />
+            <Route path="/Courses" element={<Courses />} />
+            <Route path="/Department" element={<Department />} />
+            <Route path="/StudentResults" element={<StudentResults />} />
+            <Route path="/Admins" element={<Admins />} />
+            <Route path="/Semester" element={<Semester />} />
+            <Route path="/Results" element={<Results />} />
+            <Route path="/Login" element={<Login />} />
+            <Route path="/ManageAdmin" element={<ManageAdmin />} />
+            <Route path="/StudentLogin" element={<StudentLogin />} />
+          </Routes>
           <Footer />
         </main>
       </div>

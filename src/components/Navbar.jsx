@@ -6,13 +6,34 @@ import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect, useRef, useContext } from "react";
 import { ThemeContext } from "../App";
 import ThemeButton from "./ThemeButton";
+import toast from "react-hot-toast";
+import { auth } from "../firebase/firebase";
 
 const Navbar = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
+  const location = useLocation();
+  const isLoginPage =
+    location.pathname === "/Login" ||
+    location.pathname === "/StudentLogin" ||
+    location.pathname === "/StudentResults";
+
+  async function handleLogout() {
+    try {
+      await auth.signout();
+      window.location.href = "/Login";
+      toast.success("Logged Out");
+    } catch (error) {
+      console.error("Error Logging Out:", error.message);
+    }
+  }
+
   const toggleMenu = () => {
-    setIsOpen(!isOpen);
+    if (!isLoginPage) {
+      setIsOpen(!isOpen);
+      handleLogout();
+    }
   };
 
   const closeMenu = () => {
@@ -33,7 +54,6 @@ const Navbar = () => {
     };
   }, []);
 
-  const location = useLocation();
   let dontShowList =
     location.pathname === "/Login" ||
     location.pathname === "/StudentLogin" ||
@@ -48,22 +68,28 @@ const Navbar = () => {
     >
       <div className="container px-4 mx-auto text-sm">
         <div className="flex items-center justify-between">
-          <div className="flex items-center  flex-shrink-0">
+          <div className="flex items-center flex-shrink-0">
             <Link to="/Home">
               <img className="h-7 w-7 mr-3" src={logo} alt="logo" />
             </Link>
 
             <span className="text-xt bg-gradient-to-r from-color-oranges to to-color-blues text-transparent bg-clip-text tracking-tight justify-start">
-              <Link to="/Home">ADMIN DASHBOARD </Link>
+              {dontShowList ? (
+                "Result Checker"
+              ) : isLoginPage ? (
+                <Link to="/Home">RESULT CHECKER </Link>
+              ) : (
+                <Link to="/Home">ADMIN DASHBOARD </Link>
+              )}
               <Link className="text-[#FCB040]" to="/Home">
                 |
               </Link>
             </span>
           </div>
 
-          <div className="hidden lg:flex  space-x-12 items-center">
+          <div className="hidden lg:flex space-x-12 items-center">
             {!dontShowList && (
-              <ul className="flex dark:text-white  space-x-3 text-xs ">
+              <ul className="flex dark:text-white space-x-3 text-xs ">
                 {items.map((item, index) => (
                   <li key={index} className="hoverStyle">
                     <Link to={item.href}>{item.label}</Link>
@@ -84,19 +110,22 @@ const Navbar = () => {
               </Link>
             </li>
 
-            <div className="lg:hidden">
-              <button
-                onClick={toggleMenu}
-                className="p-2 rounded-md dark:text-white  focus:outline-none"
-              >
-                {isOpen ? <FaTimes /> : <FaBars />}
-              </button>
-            </div>
+            {/* Conditionally render the hamburger menu button */}
+            {!isLoginPage && !dontShowList && (
+              <div className="lg:hidden">
+                <button
+                  onClick={toggleMenu}
+                  className="p-2 rounded-md dark:text-white focus:outline-none"
+                >
+                  {isOpen ? <FaTimes /> : <FaBars />}
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
         <div className="relative" ref={menuRef}>
-          {isOpen && (
+          {isOpen && !isLoginPage && !dontShowList && (
             <div className="lg:hidden">
               <ul className="flex flex-col dark:text-white items-center mt-4 space-y-4">
                 {items.map((item, index) => (

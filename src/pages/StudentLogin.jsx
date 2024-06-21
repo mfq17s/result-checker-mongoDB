@@ -1,22 +1,49 @@
+/* eslint-disable no-unused-vars */
 import { FaUser, FaLock } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeContext } from "../App";
+import toast from "react-hot-toast";
+import { signInWithCredential } from "firebase/auth";
+import { auth } from "../firebase/firebase";
 
 const StudentLogin = () => {
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [userCredentials, setUserCredentials] = useState({});
 
-  const handleSubmit = (e) => {
+  function handleCredentials(e) {
+    setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value });
+  }
+
+  function handleSubmit(e) {
     e.preventDefault();
-    // Perform any necessary validation or authentication checks here
-    // If successful, navigate to the StudentResults page
-    navigate("/StudentResults", {
-      state: {
-        /* Pass any necessary data as state */
-      },
-    });
-  };
+
+    toast.promise(
+      signInWithCredential(
+        auth,
+        userCredentials.indexNumber,
+        userCredentials.password
+      ),
+      {
+        loading: "Logging in....",
+        success: (userCredential) => {
+          const user = userCredential.user;
+          console.log(user);
+          navigate("/StudentResults");
+          return "Login successful!";
+        },
+        error: (error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          return errorMessage;
+        },
+      }
+    );
+  }
+
   return (
     <div
       className={`${
@@ -33,6 +60,9 @@ const StudentLogin = () => {
               <div className="flex items-center border border-gray-400 rounded-md px-3 py-2">
                 <FaUser className="mr-2" />
                 <input
+                  onChange={(e) => {
+                    handleCredentials(e);
+                  }}
                   type="text"
                   placeholder="indexNumber"
                   required
@@ -46,6 +76,9 @@ const StudentLogin = () => {
               <div className="flex items-center mt-6 border border-gray-400 rounded-md px-3 py-2">
                 <FaLock className="mr-2" />
                 <input
+                  onChange={(e) => {
+                    handleCredentials(e);
+                  }}
                   type="password"
                   placeholder="Password"
                   required

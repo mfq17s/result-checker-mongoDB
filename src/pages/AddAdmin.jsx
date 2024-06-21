@@ -1,4 +1,5 @@
 import { useContext, useState } from "react";
+import { Link } from "react-router-dom";
 import toast, { Toaster } from "react-hot-toast";
 import { ThemeContext } from "../App";
 import { auth } from "../../firebase/firebase";
@@ -40,7 +41,7 @@ const AddAdmin = () => {
         loading: "Creating admin account...",
         success: (userCredential) => {
           const user = userCredential.user;
-         console.log(user); 
+          console.log(user);
           return "Admin account created successfully!";
         },
         error: (error) => {
@@ -118,6 +119,9 @@ const AddAdmin = () => {
             Add Admin
           </button>
         </form>
+        <Link to="/ManageAdmin" className="mt-4 ">
+          <button className="buttonStyle my-4">Manage Admin</button>
+        </Link>
       </div>
       <Toaster />
     </div>

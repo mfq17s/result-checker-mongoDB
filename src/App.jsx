@@ -16,6 +16,7 @@ import AddAdmin from "./pages/AddAdmin";
 import { createContext } from "react";
 import { useState } from "react";
 import { Toaster } from "react-hot-toast";
+import ManageAdmin from "./pages/ManageAdmin";
 
 export const ThemeContext = createContext(null);
 
@@ -45,6 +46,7 @@ const App = () => {
               <Route path="/Semester" element={<Semester />} />
               <Route path="/Results" element={<Results />} />
               <Route path="/Login" element={<Login />} />
+              <Route path="/ManageAdmin" element={<ManageAdmin />} />
               <Route path="/StudentLogin" element={<StudentLogin />} />
             </Routes>
           <Footer />

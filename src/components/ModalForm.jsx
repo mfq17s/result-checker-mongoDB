@@ -1,26 +1,72 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+/* eslint-disable */
+import React, { useState } from "react";
+import PropTypes from "prop-types";
+import { addDoc, collection } from "firebase/firestore";
+import { db } from "../firebase/firebase";
 
 const ModalForm = ({ onSubmit, onClose, theme }) => {
+  const [indexNumber, setIndexNumber] = useState("");
+  const [nextIndexNumber, setNextIndexNumber] = useState(1000000000);
+
+  const generateIndexNumber = () => {
+    const newIndexNumber = nextIndexNumber.toString().padStart(10, "0");
+    setNextIndexNumber(nextIndexNumber + 1);
+    return newIndexNumber;
+  };
+
   const [formData, setFormData] = useState({
-    academicYear: '',
-    date: '',
-    firstName: '',
-    lastName: '',
-    dateOfBirth: '',
-    nationality: '',
-    gender: '',
-    faculty: '',
+    academicYear: "",
+    date: "",
+    firstName: "",
+    lastName: "",
+    dateOfBirth: "",
+    nationality: "",
+    gender: "",
+    faculty: "",
     schedule: [],
-    phoneNumber: '',
-    emergencyNumber: '',
-    emailAddress: '',
+    phoneNumber: "",
+    emergencyNumber: "",
+    emailAddress: "",
+    password: "",
+    confirmPassword: "",
+    indexNumber: "",
   });
+
+  const handleAddStudent = async (formData) => {
+    const emailAddress = formData["emailAddress"];
+    const password = formData["password"];
+    const otherFormData = Object.assign({}, formData);
+    delete otherFormData["emailAddress"];
+    delete otherFormData["password"];
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        emailAddress,
+        password
+      );
+      const user = userCredential.user;
+
+      if (user) {
+        await setDoc(doc(db, "student", user.uid), {
+          ...otherFormData,
+          uid: user.uid,
+          role: "student",
+        });
+      }
+
+      toast.success("Student added successfully");
+    } catch (error) {
+      const errorCode = error.code;
+      const errorMessage = error.message;
+      console.log(errorCode, errorMessage);
+      toast.error(errorMessage);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
+    if (type === "checkbox") {
       let newSchedule = [...formData.schedule];
       if (checked) {
         newSchedule = [...newSchedule, value];
@@ -33,20 +79,53 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    onSubmit(formData);
-  };
+    const confirmPasswordInput = document.getElementById("confirmPassword");
+    const confirmPassword = confirmPasswordInput.value;
 
+    if (formData.password !== confirmPassword) {
+      toast.error("Passwords do not match");
+      return;
+    }
+    const indexNumberToAssign = formData.indexNumber || generateIndexNumber();
+    try {
+      await onSubmit({ ...formData, indexNumber: indexNumberToAssign });
+      setFormData({
+        academicYear: "",
+        date: "",
+        firstName: "",
+        lastName: "",
+        dateOfBirth: "",
+        nationality: "",
+        gender: "",
+        faculty: "",
+        schedule: [],
+        phoneNumber: "",
+        emergencyNumber: "",
+        emailAddress: "",
+        password: "",
+        confirmPassword: "",
+        indexNumber: "",
+      });
+    } catch (error) {
+      console.error("Error adding student: ", error);
+    }
+  };
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div
         className={`${
-          theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'
+          theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
         } p-8 rounded-lg shadow-lg max-w-3xl w-full scale-75 overflow-y-auto max-h-[80vh]`}
       >
-        <h2 className="text-2xl font-bold mb-4 text-center">Register Student</h2>
-        <form onSubmit={handleSubmit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <h2 className="text-2xl font-bold mb-4 text-center">
+          Register Student
+        </h2>
+        <form
+          onSubmit={handleSubmit}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-4"
+        >
           <div>
             <label htmlFor="academicYear" className="block mb-2">
               Academic Year
@@ -58,7 +137,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.academicYear}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -73,8 +152,8 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.date}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
-              } p-2 rounded-md`}
+                theme === "dark" ? "border-gray-600 " : "border-gray-400"
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -88,7 +167,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.firstName}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -103,7 +182,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.lastName}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -118,8 +197,8 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.dateOfBirth}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
-              } p-2 rounded-md`}
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -133,7 +212,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.nationality}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -148,7 +227,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.gender}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -162,8 +241,8 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.faculty}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
-              } p-2 rounded-md`}
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
+              } p-2 rounded-md dark:text-black`}
             >
               <option value="">Select Faculty</option>
               <option value="business">Business</option>
@@ -179,7 +258,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
                   type="checkbox"
                   name="schedule"
                   value="day"
-                  checked={formData.schedule.includes('day')}
+                  checked={formData.schedule.includes("day")}
                   onChange={handleChange}
                   className="mr-2"
                 />
@@ -190,7 +269,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
                   type="checkbox"
                   name="schedule"
                   value="evening"
-                  checked={formData.schedule.includes('evening')}
+                  checked={formData.schedule.includes("evening")}
                   onChange={handleChange}
                   className="mr-2"
                 />
@@ -209,7 +288,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.phoneNumber}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -224,7 +303,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.emergencyNumber}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
@@ -239,15 +318,63 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               value={formData.emailAddress}
               onChange={handleChange}
               className={`w-full border ${
-                theme === 'dark' ? 'border-gray-600' : 'border-gray-400'
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md`}
             />
           </div>
+          <div>
+            <label htmlFor="password" className="block mb-2">
+              password
+            </label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              className={`w-full border ${
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
+              } p-2 rounded-md dark:text-black`}
+            />
+          </div>
+          <div>
+            <label htmlFor="confirmPassword" className="block mb-2">
+              Confirm password
+            </label>
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              className={`w-full border ${
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
+              } p-2 rounded-md dark:text-black`}
+            />
+          </div>
+          <div>
+            <label htmlFor="indexNumber" className="block mb-2">
+              Index Number (Optional)
+            </label>
+            <input
+              type="text"
+              id="indexNumber"
+              name="indexNumber"
+              value={formData.indexNumber}
+              onChange={handleChange}
+              className={`w-full border ${
+                theme === "dark" ? "border-gray-600" : "border-gray-400"
+              } p-2 rounded-md`}
+            />
+          </div>
+
           <div className="sm:col-span-2 flex justify-end">
             <button
               type="submit"
               className={`${
-                theme === 'dark' ? 'bg-blue-600 hover:bg-blue-700' : 'bg-blue-500 hover:bg-blue-600'
+                theme === "dark"
+                  ? "bg-blue-600 hover:bg-blue-700"
+                  : "bg-blue-500 hover:bg-blue-600"
               } text-white font-bold py-2 px-4 rounded`}
             >
               Submit
@@ -255,7 +382,9 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
             <button
               onClick={onClose}
               className={`${
-                theme === 'dark' ? 'bg-red-600 hover:bg-red-700' : 'bg-red-500 hover:bg-red-600'
+                theme === "dark"
+                  ? "bg-red-600 hover:bg-red-700"
+                  : "bg-red-500 hover:bg-red-600"
               } text-white font-bold py-2 px-4 rounded ml-4`}
             >
               Close

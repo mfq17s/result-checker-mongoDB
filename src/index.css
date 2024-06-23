@@ -52,3 +52,16 @@ td {
   background-color: #3367d6; /* Darker shade on hover */
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
 }
+
+.counter {
+  animation: counter 1s ease-in-out;
+}
+
+@keyframes counter {
+  from {
+    transform: scale(0.5);
+  }
+  to {
+    transform: scale(1);
+  }
+}

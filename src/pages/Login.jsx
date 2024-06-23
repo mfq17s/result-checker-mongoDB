@@ -1,22 +1,26 @@
-import { FaUser, FaLock } from "react-icons/fa";
+import { FaUser, FaLock, FaEye, FaEyeSlash } from "react-icons/fa";
 import { Link, useNavigate } from "react-router-dom";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ThemeContext } from "../App";
 import { auth } from "../firebase/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { useState } from "react";
 import toast from "react-hot-toast";
 
 const Login = () => {
   const [userCredentials, setUserCredentials] = useState({});
   const { theme } = useContext(ThemeContext);
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
-  function handleCredentials(e) {
+  const handleCredentials = (e) => {
     setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value });
-  }
+  };
 
-  function handleSignin(e) {
+  const togglePasswordVisibility = () => {
+    setShowPassword((prevState) => !prevState);
+  };
+
+  const handleSignin = (e) => {
     e.preventDefault();
 
     toast.promise(
@@ -26,12 +30,12 @@ const Login = () => {
         userCredentials.password
       ),
       {
-        loading: "Loggin in....",
+        loading: "Logging in...",
         success: (userCredential) => {
           const user = userCredential.user;
           console.log(user);
           navigate("/Home");
-          return "Login successfull";
+          return "Login successful";
         },
         error: (error) => {
           const errorCode = error.code;
@@ -42,7 +46,7 @@ const Login = () => {
         },
       }
     );
-  }
+  };
 
   return (
     <div
@@ -80,7 +84,7 @@ const Login = () => {
                   onChange={(e) => {
                     handleCredentials(e);
                   }}
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   placeholder="Password"
                   required
                   className="outline-none flex-grow placeholder-black darkmode dark:placeholder-white p-1"
@@ -88,6 +92,13 @@ const Login = () => {
                   name="password"
                   autoComplete="current-password"
                 />
+                <button
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                  className="focus:outline-none"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
               </div>
             </div>
             <div></div>

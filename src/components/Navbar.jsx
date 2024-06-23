@@ -14,14 +14,14 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const menuRef = useRef(null);
   const location = useLocation();
-  const isLoginPage =
-    location.pathname === "/Login" ||
+  const isSpecialPage =
+    location.pathname === "/StudentResults" ||
     location.pathname === "/StudentLogin" ||
-    location.pathname === "/StudentResults";
+    location.pathname === "/Login";
 
   async function handleLogout() {
     try {
-      await auth.signout();
+      await auth.signOut();
       window.location.href = "/Login";
       toast.success("Logged Out");
     } catch (error) {
@@ -30,10 +30,7 @@ const Navbar = () => {
   }
 
   const toggleMenu = () => {
-    if (!isLoginPage) {
-      setIsOpen(!isOpen);
-      handleLogout();
-    }
+    setIsOpen(!isOpen);
   };
 
   const closeMenu = () => {
@@ -54,12 +51,6 @@ const Navbar = () => {
     };
   }, []);
 
-  let dontShowList =
-    location.pathname === "/Login" ||
-    location.pathname === "/StudentLogin" ||
-    location.pathname === "/StudentResults" ||
-    location.pathname === "/";
-
   return (
     <nav
       className={`fixed z-50 py-3 w-[100%] ${
@@ -74,10 +65,8 @@ const Navbar = () => {
             </Link>
 
             <span className="text-xt bg-gradient-to-r from-color-oranges to to-color-blues text-transparent bg-clip-text tracking-tight justify-start">
-              {dontShowList ? (
+              {isSpecialPage ? (
                 "Result Checker"
-              ) : isLoginPage ? (
-                <Link to="/Home">RESULT CHECKER </Link>
               ) : (
                 <Link to="/Home">ADMIN DASHBOARD </Link>
               )}
@@ -87,8 +76,8 @@ const Navbar = () => {
             </span>
           </div>
 
-          <div className="hidden lg:flex space-x-12 items-center">
-            {!dontShowList && (
+          {!isSpecialPage && (
+            <div className="hidden lg:flex space-x-12 items-center">
               <ul className="flex dark:text-white space-x-3 text-xs ">
                 {items.map((item, index) => (
                   <li key={index} className="hoverStyle">
@@ -96,22 +85,39 @@ const Navbar = () => {
                   </li>
                 ))}
               </ul>
-            )}
-          </div>
+            </div>
+          )}
+
           <div className="space-x-6 flex items-center">
             <ThemeButton theme={theme} toggleTheme={toggleTheme} />
-            <li className="hoverStyle list-none hidden lg:block">
-              <Link
-                to="/"
-                onClick={toggleMenu}
-                className="logoutLink px-5 py-2"
-              >
-                Logout
-              </Link>
-            </li>
+            {isSpecialPage && (
+              <>
+                <li className="hoverStyle list-none hidden lg:block">
+                  <Link
+                    to="/"
+                    onClick={handleLogout}
+                    className="logoutLink px-5 py-2"
+                  >
+                    Logout
+                  </Link>
+                </li>
+                {/* Render logout button for small screens on StudentResults page */}
+                {location.pathname === "/StudentResults" && (
+                  <div className="lg:hidden">
+                    <Link
+                      to="/"
+                      onClick={handleLogout}
+                      className="logoutLink px-5 py-2"
+                    >
+                      Logout
+                    </Link>
+                  </div>
+                )}
+              </>
+            )}
 
             {/* Conditionally render the hamburger menu button */}
-            {!isLoginPage && !dontShowList && (
+            {!isSpecialPage && (
               <div className="lg:hidden">
                 <button
                   onClick={toggleMenu}
@@ -125,7 +131,7 @@ const Navbar = () => {
         </div>
 
         <div className="relative" ref={menuRef}>
-          {isOpen && !isLoginPage && !dontShowList && (
+          {isOpen && !isSpecialPage && (
             <div className="lg:hidden">
               <ul className="flex flex-col dark:text-white items-center mt-4 space-y-4">
                 {items.map((item, index) => (
@@ -138,7 +144,7 @@ const Navbar = () => {
                 <li className="hoverStyle">
                   <Link
                     to="/"
-                    onClick={toggleMenu}
+                    onClick={handleLogout}
                     className="logoutLink px-5 py-2"
                   >
                     Logout

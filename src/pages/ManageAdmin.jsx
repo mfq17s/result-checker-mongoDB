@@ -90,7 +90,7 @@ function ManageAdmin() {
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-xl font-bold">All Admins</h3>
             <Link to="/Admins">
-              <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+              <button className="buttonStyle px-2">
                 Add Admin
               </button>
             </Link>
@@ -113,7 +113,7 @@ function ManageAdmin() {
                   <td>{user.lastName}</td>
                   <td>
                     <button
-                      className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                      className="buttonStyle p-2"
                       onClick={() => handleUpdate(user)}
                     >
                       Update
@@ -121,7 +121,7 @@ function ManageAdmin() {
                   </td>
                   <td>
                     <button
-                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                      className="buttonStyle p-2"
                       onClick={() => handleDelete(user.uid)}
                     >
                       Delete

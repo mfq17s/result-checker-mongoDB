@@ -7,7 +7,13 @@ import { ThemeContext } from "../App";
 function StudentResults() {
   const { theme } = useContext(ThemeContext);
   const location = useLocation();
-  const results = location.state?.results || [];
+  const studentData = location.state || {};
+  const allResults = location.state?.results || [];
+  const indexNumber = location.state?.indexNumber || "";
+
+  const results = indexNumber
+    ? allResults.filter((result) => result.indexNumber === indexNumber)
+    : allResults;
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
@@ -18,18 +24,36 @@ function StudentResults() {
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } sm:scale-100 scale-75 h-[100vh] darkmode`}
+      } sm:scale-100 scale-75 h-[100vh] w-[95vw] darkmode`}
     >
-      <div className="pt-15 pb-16 flex flex-col items-center justify-center darkmode">
-        <div ref={componentRef} className="w-4/6 px-4 py-6">
+      <div className="pt-15 pb-16 flex flex-col items-center darkmode w-100%">
+        <div ref={componentRef} className="w-full  lg:p-9 md:p-10">
           <h1 className="sr-only">Result Page</h1>
+
+          <div>
+  <h2 className="text-xl font-bold mb-4">Student Details</h2>
+  <p className="py-2">
+    <span className="font-bold ">Index Number:</span> {studentData.indexNumber}
+  </p>
+  <p className="py-2">
+    <span className="font-bold">First Name:</span> {studentData.firstName}
+  </p>
+  <p className="py-2">
+    <span className="font-bold">Last Name:</span> {studentData.lastName}
+  </p>
+  <p className="py-2">
+    <span className="font-bold">Email:</span> {studentData.emailAddress}
+  </p>
+  <p className="py-2">
+    <span className="font-bold">Phone Number:</span> {studentData.phoneNumber}
+  </p>
+</div>
+
+
+          {/* Display results if available */}
           {results.length > 0 ? (
             results.map((result) => (
               <div key={result.id}>
-                <p>
-                  <span className="font-bold">Index Number:</span>{" "}
-                  {result.indexNumber}
-                </p>
                 <p>
                   <span className="font-bold">Department:</span>{" "}
                   {result.department}
@@ -78,15 +102,17 @@ function StudentResults() {
               </div>
             ))
           ) : (
-            <p>No results found.</p>
+            <p className="text-3xl p-5">No results found.</p>
           )}
         </div>
-        <button
-          onClick={handlePrint}
-          className="buttonStyle width: 25%; flex items-center justify-between"
-        >
-          Print Result <FaPrint />
-        </button>
+        <div className=" w-1/2 flex justify-center items-center py-2">
+          <button
+            onClick={handlePrint}
+            className="buttonStyle w-3/5 flex justify-center items-center gap-5"
+          >
+            Print Result <FaPrint />
+          </button>
+        </div>
       </div>
     </div>
   );

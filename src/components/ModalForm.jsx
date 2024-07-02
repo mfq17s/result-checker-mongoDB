@@ -4,16 +4,10 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { addDoc, collection } from "firebase/firestore";
 import { db } from "../firebase/firebase";
+import CourseModal from "./courseModal";
 
 const ModalForm = ({ onSubmit, onClose, theme }) => {
   const [indexNumber, setIndexNumber] = useState("");
-  const [nextIndexNumber, setNextIndexNumber] = useState(1000000000);
-
-  const generateIndexNumber = () => {
-    const newIndexNumber = nextIndexNumber.toString().padStart(10, "0");
-    setNextIndexNumber(nextIndexNumber + 1);
-    return newIndexNumber;
-  };
 
   const [formData, setFormData] = useState({
     academicYear: "",
@@ -23,7 +17,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
     dateOfBirth: "",
     nationality: "",
     gender: "",
-    faculty: "",
+    department: "",
     schedule: [],
     phoneNumber: "",
     emergencyNumber: "",
@@ -32,6 +26,13 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
     confirmPassword: "",
     indexNumber: "",
   });
+  const [courses, setCourses] = useState([]);
+  const [showCourseModal, setShowCourseModal] = useState(false);
+
+  const handleAddCourse = (courseData) => {
+    setCourses([...courses, courseData]);
+    setShowCourseModal(false);
+  };
 
   const handleAddStudent = async (formData) => {
     const emailAddress = formData["emailAddress"];
@@ -88,9 +89,11 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
       toast.error("Passwords do not match");
       return;
     }
-    const indexNumberToAssign = formData.indexNumber || generateIndexNumber();
+    const currentIndexNumber = parseInt(indexNumber || "0", 10);
+    const newIndexNumber = String(currentIndexNumber + 1).padStart(10, "0");
+    setIndexNumber(newIndexNumber);
     try {
-      await onSubmit({ ...formData, indexNumber: indexNumberToAssign });
+      await onSubmit({ ...formData, indexNumber: indexNumber });
       setFormData({
         academicYear: "",
         date: "",
@@ -99,7 +102,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
         dateOfBirth: "",
         nationality: "",
         gender: "",
-        faculty: "",
+        department: "",
         schedule: [],
         phoneNumber: "",
         emergencyNumber: "",
@@ -126,6 +129,16 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
           onSubmit={handleSubmit}
           className="grid grid-cols-1 sm:grid-cols-2 gap-4"
         >
+          <div>
+            <ul>
+              {courses.map((course, index) => (
+                <li key={index}>
+                  {course.courseName} - {course.courseCode} - {course.grade}
+                </li>
+              ))}
+            </ul>
+          </div>
+
           <div>
             <label htmlFor="academicYear" className="block mb-2">
               Academic Year
@@ -232,22 +245,27 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
             />
           </div>
           <div>
-            <label htmlFor="faculty" className="block mb-2">
-              Faculty
+            <label htmlFor="department" className="block mb-2">
+              department
             </label>
             <select
-              id="faculty"
-              name="faculty"
-              value={formData.faculty}
+              id="department"
+              name="department"
+              value={formData.department}
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
               } p-2 rounded-md dark:text-black`}
             >
-              <option value="">Select Faculty</option>
-              <option value="business">Business</option>
-              <option value="science">Science</option>
-              <option value="fashion">Fashion</option>
+              <option value="">Select department</option>
+              <option value="ict">ICT</option>
+              <option value="fashion">FASHION</option>
+              <option value="medlab">MED LAB</option>
+              <option value="graphics">GRAPHICS</option>
+              <option value="accounting">ACCOUNTING</option>
+              <option value="appliedscience">APPLIED SCIENCE</option>
+              <option value="pa">PA</option>
+              <option value="business">BUSINESS</option>
             </select>
           </div>
           <div className="sm:col-span-2">
@@ -264,7 +282,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
                 />
                 Day
               </label>
-              <label>
+              <label className="mr-4">
                 <input
                   type="checkbox"
                   name="schedule"
@@ -274,6 +292,17 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
                   className="mr-2"
                 />
                 Evening
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="schedule"
+                  value="weekend"
+                  checked={formData.schedule.includes("weekend")}
+                  onChange={handleChange}
+                  className="mr-2"
+                />
+                Weekend
               </label>
             </div>
           </div>
@@ -392,6 +421,13 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
           </div>
         </form>
       </div>
+      {showCourseModal && (
+        <CourseModal
+          onAddCourse={handleAddCourse}
+          onClose={() => setShowCourseModal(false)}
+          theme={theme}
+        />
+      )}
     </div>
   );
 };

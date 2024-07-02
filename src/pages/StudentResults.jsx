@@ -75,6 +75,8 @@ function StudentResults() {
                     </tr>
                   </thead>
                   <tbody>
+
+                    
                     {result.courses.map((course, index) => (
                       <tr key={index}>
                         <td>{index + 1}</td>
@@ -84,6 +86,8 @@ function StudentResults() {
                       </tr>
                     ))}
                   </tbody>
+
+                  
                   <tfoot>
                     <tr>
                       <td colSpan={3} className="">

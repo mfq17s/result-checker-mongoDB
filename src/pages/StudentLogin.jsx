@@ -27,22 +27,42 @@ const StudentLogin = () => {
       const studentRef = collection(db, "student");
       const q = query(studentRef, where("indexNumber", "==", indexNumber));
       const querySnapshot = await getDocs(q);
-
+  
       if (querySnapshot.empty) {
         // No student found with the provided index number
         console.log("No students found");
-        toast.error("Invalid index number ");
+        toast.error("Invalid index number");
         return;
       }
-
+  
       // Get the first (and only) document from the query snapshot
       const studentDoc = querySnapshot.docs[0];
       const studentData = studentDoc.data();
-
+  
       // Check if the provided password matches the stored password
       if (studentData.password === password) {
-        // Navigate to StudentResults and pass the student's details as state
-        navigate("/StudentResults", { state: { ...studentData } });
+        // Query the "results" collection for the student's results
+        const resultsRef = collection(db, "results");
+        const resultsQuery = query(
+          resultsRef,
+          where("indexNumber", "==", indexNumber)
+        );
+        const resultsSnapshot = await getDocs(resultsQuery);
+  
+        if (resultsSnapshot.empty) {
+          // No results found for the student
+          console.log("No results found");
+          toast.error("No results found");
+          return;
+        }
+  
+        // Retrieve the results data
+        const resultsData = resultsSnapshot.docs.map((doc) => doc.data());
+  
+        // Navigate to StudentResults and pass the student's details and results as state
+        navigate("/StudentResults", {
+          state: { ...studentData, results: resultsData },
+        });
       } else {
         // Invalid password
         toast.error("Invalid password");
@@ -52,18 +72,7 @@ const StudentLogin = () => {
       toast.error("An error occurred. Please try again later.");
     }
   };
-
-  const handleCheckResult = (e) => {
-    e.preventDefault();
-    toast.promise(
-      checkResult(userCredentials.indexNumber, userCredentials.password),
-      {
-        loading: "Checking result...",
-        success: () => "Result checked successfully",
-        error: (err) => err.toString(),
-      }
-    );
-  };
+  
 
   return (
     <div
@@ -120,7 +129,7 @@ const StudentLogin = () => {
             <div></div>
           </div>
           <button
-            onClick={handleCheckResult}
+            onClick={checkResult}
             type="button"
             className="buttonStyle"
           >

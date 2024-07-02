@@ -64,7 +64,7 @@ function Admins() {
         theme === "dark" ? "dark" : "light"
       } flex justify-center items-center min-h-screen w-100% darkmode`}
     >
-      <div className="bg-white text-gray-800 p-6 dark:shadow-white dark:shadow-inner shadow-xl rounded-lg w-4/5 max-w-md sm:scale-100 darkmode scale-75">
+      <div className="bg-white text-gray-800 p-6 dark:shadow-white dark:shadow-inner shadow-xl rounded-lg w-4/5 max-w-md sm:scale-100 darkmode">
         <h1 className="text-xl font-bold mb-4 text-center">Add Admin</h1>
         <form onSubmit={handleAddAdmin}>
           <div className="mb-4">

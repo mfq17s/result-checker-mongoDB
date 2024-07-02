@@ -17,6 +17,7 @@ const Navbar = () => {
   const isSpecialPage =
     location.pathname === "/StudentResults" ||
     location.pathname === "/StudentLogin" ||
+    location.pathname === "/" ||
     location.pathname === "/Login";
 
   async function handleLogout() {

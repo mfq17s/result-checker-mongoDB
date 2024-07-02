@@ -7,7 +7,7 @@ const UpdateStudentModal = ({ onSubmit, onClose, theme, student }) => {
     id: "",
     firstName: "",
     lastName: "",
-    faculty: "",
+    department: "",
     emailAddress: "",
     indexNumber: "",
   });
@@ -18,7 +18,7 @@ const UpdateStudentModal = ({ onSubmit, onClose, theme, student }) => {
         id: student.id,
         firstName: student.firstName,
         lastName: student.lastName,
-        faculty: student.faculty,
+        department: student.department,
         emailAddress: student.emailAddress,
         indexNumber: student.indexNumber,
       });
@@ -72,14 +72,14 @@ const UpdateStudentModal = ({ onSubmit, onClose, theme, student }) => {
               />
             </div>
             <div className="mb-4 darkmode">
-              <label htmlFor="faculty" className="block mb-2">
-                Faculty
+              <label htmlFor="department" className="block mb-2">
+                department
               </label>
               <input
                 type="text"
-                id="faculty"
-                name="faculty"
-                value={formData.faculty}
+                id="department"
+                name="department"
+                value={formData.department}
                 onChange={handleChange}
                 className="border border-gray-400 p-2 rounded-md w-full darkmode"
               />
@@ -139,7 +139,7 @@ UpdateStudentModal.propTypes = {
   student: PropTypes.shape({
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
-    faculty: PropTypes.string.isRequired,
+    department: PropTypes.string.isRequired,
     emailAddress: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     indexNumber: PropTypes.string.isRequired,

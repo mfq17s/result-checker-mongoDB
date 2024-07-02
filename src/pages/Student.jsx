@@ -78,7 +78,7 @@ const Student = () => {
         await updateDoc(studentRef, {
           firstName: updatedStudent.firstName,
           lastName: updatedStudent.lastName,
-          faculty: updatedStudent.faculty,
+          department: updatedStudent.department,
           emailAddress: updatedStudent.emailAddress,
           indexNumber: updatedStudent.indexNumber,
         });
@@ -103,7 +103,7 @@ const Student = () => {
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } flex justify-center items-center w-[100vw] h-[100vh] darkmode sm:scale-100 scale-75`}
+      } flex justify-center items-center  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
     >
       <div>
         {showModal && (
@@ -115,16 +115,13 @@ const Student = () => {
           />
         )}
       </div>
-      <div>
-        <button onClick={openModal} className="buttonStyle p-4 ">
-          Register Student
-        </button>
+      <div className="flex flex-col items-center justify-end scale-[80%] gap-2">
         <table>
           <thead>
             <tr>
               <th>First Name</th>
               <th>Last Name</th>
-              <th>Faculty</th>
+              <th>Department</th>
               <th>Email</th>
               <th>Index Number</th>
               <th>Actions</th>
@@ -135,16 +132,10 @@ const Student = () => {
               <tr key={student.id}>
                 <td>{student.firstName}</td>
                 <td>{student.lastName}</td>
-                <td>{student.faculty}</td>
+                <td>{student.department}</td>
                 <td>{student.emailAddress}</td>
                 <td>{student.indexNumber}</td>
-                <td className="flex  gap-2 ">
-                  <button
-                    className="  buttonStyle px-3  "
-                    onClick={() => handleDelete(student.id)}
-                  >
-                    Delete
-                  </button>
+                <td className="flex  gap-4 ">
                   <button
                     className="buttonStyle px-3"
                     onClick={() => handleUpdate(student)}
@@ -156,7 +147,13 @@ const Student = () => {
             ))}
           </tbody>
         </table>
+        <div className="flex justify-center mt-11">
+          <button onClick={openModal} className="buttonStyle p-4  ">
+            Register Student
+          </button>
+        </div>
       </div>
+
       {isModalOpen && (
         <ModalForm
           onSubmit={handleAddStudent}

@@ -54,7 +54,7 @@ const Navbar = () => {
 
   return (
     <nav
-      className={`fixed z-50 py-3 w-[100%] ${
+      className={`fixed z-50 py-2 w-[100%] ${
         theme === "dark" ? "dark:bg-black" : "bg-white"
       } backdrop-blur-lg border-b border-neutral-700/80 top-0`}
     >

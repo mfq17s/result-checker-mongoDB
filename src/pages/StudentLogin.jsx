@@ -4,7 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import React, { useContext, useState } from "react";
 import { ThemeContext } from "../App";
 import toast from "react-hot-toast";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import {  collection, doc, setDoc, updateDoc, getDocs, query, where } from "firebase/firestore";
 import { db } from "../firebase/firebase";
 
 const StudentLogin = () => {
@@ -12,7 +12,7 @@ const StudentLogin = () => {
   const navigate = useNavigate();
   const [userCredentials, setUserCredentials] = useState({});
   const [showPassword, setShowPassword] = useState(false);
-
+  
   const handleCredentials = (e) => {
     setUserCredentials({ ...userCredentials, [e.target.name]: e.target.value });
   };
@@ -21,25 +21,25 @@ const StudentLogin = () => {
     setShowPassword((prevState) => !prevState);
   };
 
-  const checkResult = async (indexNumber, password) => {
+  const checkResult = async (e) => {
+    e.preventDefault(); // Prevent the default form submission behavior
+  
+    const { indexNumber, password } = userCredentials;
+  
     try {
-      // Query the database to find the student with the provided index number
       const studentRef = collection(db, "student");
       const q = query(studentRef, where("indexNumber", "==", indexNumber));
       const querySnapshot = await getDocs(q);
   
       if (querySnapshot.empty) {
-        // No student found with the provided index number
         console.log("No students found");
         toast.error("Invalid index number");
         return;
       }
   
-      // Get the first (and only) document from the query snapshot
       const studentDoc = querySnapshot.docs[0];
       const studentData = studentDoc.data();
   
-      // Check if the provided password matches the stored password
       if (studentData.password === password) {
         // Query the "results" collection for the student's results
         const resultsRef = collection(db, "results");
@@ -53,11 +53,29 @@ const StudentLogin = () => {
           // No results found for the student
           console.log("No results found");
           toast.error("No results found");
-          return;
         }
+
+         // Fetch course names from the "Courses" collection
+      const coursesRef = collection(db, "Courses");
+      const coursesSnapshot = await getDocs(coursesRef);
+      const courseNames = coursesSnapshot.docs.reduce((acc, doc) => {
+        acc[doc.id] = doc.data().name;
+        return acc;
+      }, {});
   
-        // Retrieve the results data
-        const resultsData = resultsSnapshot.docs.map((doc) => doc.data());
+    // Retrieve the results data with course names
+    const resultsData = resultsSnapshot.docs.map((doc) => {
+      const resultData = doc.data();
+      const courses = resultData.courses.map((course) => ({
+        ...course,
+        courseName: courseNames[course.courseId] || '', // Use the course ID to fetch the course name
+      }));
+
+      return {
+        ...resultData,
+        courses,
+      };
+    });
   
         // Navigate to StudentResults and pass the student's details and results as state
         navigate("/StudentResults", {
@@ -69,9 +87,10 @@ const StudentLogin = () => {
       }
     } catch (error) {
       console.error("Error fetching student data: ", error);
-      toast.error("An error occurred. Please try again later.");
+      toast.error("Error fetching student data");
     }
   };
+  
   
 
   return (

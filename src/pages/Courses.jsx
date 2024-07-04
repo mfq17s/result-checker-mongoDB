@@ -1,80 +1,177 @@
-import { useState, useEffect } from 'react';
-import { db } from '../firebase/firebase';
-import { useContext } from "react";
+/* eslint-disable no-unused-vars */
+import { useEffect, useState, useContext } from "react";
+import {
+  collection,
+  getDocs,
+  deleteDoc,
+  doc,
+  addDoc,
+  updateDoc,
+} from "firebase/firestore";
 import { ThemeContext } from "../App";
+import { db } from "../firebase/firebase";
+import UpdateCourseModal from "../components/UpdateCourseModal";
+import toast from "react-hot-toast";
 
-function Courses() {
+const Courses = () => {
   const { theme } = useContext(ThemeContext);
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [courses, setCourses] = useState([]);
-  const [departments, setDepartments] = useState([]);
-  const [selectedDepartment, setSelectedDepartment] = useState('');
-  const [selectedYear, setSelectedYear] = useState('');
-  const [selectedSemester, setSelectedSemester] = useState('');
+  const [editingCourse, setEditingCourse] = useState(null);
 
   useEffect(() => {
-    db.collection('departments').get().then((querySnapshot) => {
-      const departments = querySnapshot.docs.map((doc) => doc.data());
-      setDepartments(departments);
-    });
+    const fetchCourses = async () => {
+      const coursesCollection = collection(db, "Courses");
+      try {
+        const coursesSnapshot = await getDocs(coursesCollection, {
+          timeout: 60000,
+        }); // Increase timeout to 60 seconds
+        const coursesData = coursesSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setCourses(coursesData);
+      } catch (error) {
+        console.error("Error fetching courses: ", error);
+      }
+    };
+
+    fetchCourses();
   }, []);
 
-  useEffect(() => {
-    if (selectedDepartment && selectedYear && selectedSemester) {
-      db.collection('courses')
-       .where('department', '==', selectedDepartment)
-       .where('year', '==', selectedYear)
-       .where('semester', '==', selectedSemester)
-       .orderBy('year', 'asc')
-       .orderBy('semester', 'asc')
-       .get()
-       .then((querySnapshot) => {
-          const courses = querySnapshot.docs.map((doc) => doc.data());
-          setCourses(courses);
-        });
+  const openAddModal = () => {
+    setIsAddModalOpen(true);
+  };
+
+  const closeAddModal = () => {
+    setIsAddModalOpen(false);
+  };
+
+  const handleDelete = async (id) => {
+    try {
+      await deleteDoc(doc(db, "Courses", id));
+      setCourses(courses.filter((course) => course.id !== id));
+    } catch (error) {
+      console.error("Error deleting course: ", error);
     }
-  }, [selectedDepartment, selectedYear, selectedSemester]);
-
-  const handleDepartmentChange = (event) => {
-    setSelectedDepartment(event.target.value);
   };
 
-  const handleYearChange = (event) => {
-    setSelectedYear(event.target.value);
+  const handleAddCourse = async (formData) => {
+    try {
+      const coursesCollection = collection(db, "Courses");
+      const newCourseRef = await addDoc(coursesCollection, formData);
+      const newCourse = { id: newCourseRef.id, ...formData };
+      setCourses([...courses, newCourse]);
+      toast.success("Course added successfully!");
+      closeAddModal();
+    } catch (error) {
+      console.error("Error adding course:", error);
+      toast.error("Error adding course. Please try again.");
+    }
   };
 
-  const handleSemesterChange = (event) => {
-    setSelectedSemester(event.target.value);
+  const handleUpdate = async (course) => {
+    setEditingCourse(course);
   };
+
+  const handleUpdateConfirm = async (updatedCourse) => {
+    try {
+      if (updatedCourse.id) {
+        const courseRef = doc(db, "Courses", updatedCourse.id);
+        await updateDoc(courseRef, updatedCourse);
+        toast.success("Course updated successfully!");
+        setCourses(
+          courses.map((course) =>
+            course.id === updatedCourse.id ? updatedCourse : course
+          )
+        );
+      } else {
+        console.error("Invalid course ID");
+        toast.error("Error updating course. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error updating course:", error);
+      toast.error("Error updating course. Please try again.");
+    }
+  };
+
 
   return (
-    <div className={`${
-      theme === "dark" ? "dark" : "light"
-    }w-[100vw] h-[100vh] sm:scale-100 scale-75 darkmode`}>
-      <h1>Courses</h1>
-      <select value={selectedDepartment} onChange={handleDepartmentChange}>
-        {departments.map((department) => (
-          <option  key={department.name}  value={department.name}>{department.name}</option>
-        ))}
-      </select>
-      <select value={selectedYear} onChange={handleYearChange}>
-        <option value="">Select Year</option>
-        <option value="Year 1">Year 1</option>
-        <option value="Year 2">Year 2</option>
-        <option value="Year 3">Year 3</option>
-        <option value="Year 4">Year 4</option>
-      </select>
-      <select value={selectedSemester} onChange={handleSemesterChange}>
-        <option value="">Select Semester</option>
-        <option value="Semester 1">Semester 1</option>
-        <option value="Semester 2">Semester 2</option>
-      </select>
-      <ul>
-        {courses.map((course) => (
-          <li key={course.id}>{course.name}</li>
-        ))}
-      </ul>
+    <div
+      className={`${
+        theme === "dark" ? "dark" : "light"
+      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
+    >
+      <div>
+        <h1>Available Courses</h1>
+      </div>
+
+      <div>
+        {(isAddModalOpen || editingCourse) && (
+          <UpdateCourseModal
+            onSubmit={isAddModalOpen ? handleAddCourse : handleUpdateConfirm}
+            onClose={
+              isAddModalOpen ? closeAddModal : () => setEditingCourse(null)
+            }
+            theme={theme}
+            course={
+              editingCourse || {
+                courseName: "",
+                courseCode: "",
+                department: "",
+              }
+            }
+          />
+        )}
+      </div>
+      <div className="flex flex-col items-center justify-end scale-[70%]  gap-2">
+        <table>
+          <thead>
+            <tr>
+              <th>Course Name</th>
+              <th>Course Code</th>
+              <th>Year</th>
+              <th>Semester</th>
+              <th>Department</th>
+              {/* Add more columns for other course fields */}
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {courses.map((course) => (
+              <tr key={course.id}>
+                <td>{course.name}</td>
+                <td>{course.id}</td>
+                <td>{course.year}</td>
+                <td>{course.semester}</td>
+                <td>{course.department}</td>
+
+                <td className="flex  gap-4 ">
+                  <button
+                    className="buttonStyle px-3"
+                    onClick={() => handleUpdate(course)}
+                  >
+                    Update
+                  </button>
+                  <button
+                    className="buttonStyle px-3"
+                    onClick={() => handleDelete(course.id)}
+                  >
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+        <div className="flex justify-center mt-11">
+          <button onClick={openAddModal} className="buttonStyle p-4  ">
+            Add Course
+          </button>
+        </div>
+      </div>
     </div>
   );
-}
+};
 
-export default Courses
+export default Courses;

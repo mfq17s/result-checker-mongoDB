@@ -30,6 +30,7 @@ function Results() {
     courses: [],
   });
   const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     fetchResults();
     fetchCourses();
@@ -41,7 +42,7 @@ function Results() {
       const querySnapshot = await getDocs(coursesCollectionRef);
       const coursesData = querySnapshot.docs.map((doc) => ({
         id: doc.id,
-        courseName: doc.data().name,
+        name: doc.data().name,
       }));
       setCourses(coursesData);
     } catch (error) {
@@ -54,13 +55,28 @@ function Results() {
     try {
       const resultsCollectionRef = collection(db, "results");
       const querySnapshot = await getDocs(resultsCollectionRef);
-      const resultsData = querySnapshot.docs.map((doc) => doc.data());
+      const resultsData = await Promise.all(
+        querySnapshot.docs.map(async (doc) => {
+          const data = doc.data();
+          const courses = await Promise.all(
+            data.courses.map(async (course) => {
+              const courseDoc = await getDoc(doc(db, "Courses", course.courseId));
+              return {
+                ...course,
+                name: courseDoc.exists() ? courseDoc.data().name : "",
+              };
+            })
+          );
+          return { ...data, courses };
+        })
+      );
       setResults(resultsData);
     } catch (error) {
       console.error("Error fetching results data: ", error);
       toast.error("Error fetching results data");
     }
   };
+  
 
   const addResult = async (e) => {
     e.preventDefault();
@@ -174,7 +190,14 @@ function Results() {
       const course = courses.find((c) => c.id === value);
       updatedCourses[index] = {
         courseId: value,
-        courseName: course ? course.courseName : "",
+        courseName: course ? course.name : "",
+        grade: updatedCourses[index].grade,
+      };
+    } else if (field === "courseName") {
+      const course = courses.find((c) => c.name === value);
+      updatedCourses[index] = {
+        courseId: course ? course.id : "",
+        courseName: value,
         grade: updatedCourses[index].grade,
       };
     } else {
@@ -340,21 +363,7 @@ function Results() {
                 />
               </div>
 
-              <div className="mr-4">
-                <label htmlFor={`courseName-${index}`} className="block mb-2">
-                  Course Name
-                </label>
-                <input
-                  type="text"
-                  id={`courseName-${index}`}
-                  name="courseName"
-                  placeholder="Course Name"
-                  value={course.courseName}
-                  readOnly
-                  className="bg-gray-200 text-gray-800 outline-none w-full px-3 py-2 mb-5 rounded-md"
-                />
-              </div>
-
+             
               <div>
                 <label htmlFor={`grade-${index}`} className="block mb-2">
                   Grade

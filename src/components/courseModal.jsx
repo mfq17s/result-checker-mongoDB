@@ -4,9 +4,11 @@ import PropTypes from "prop-types";
 
 const CourseModal = ({ onAddCourse, onClose, theme }) => {
   const [courseData, setCourseData] = useState({
-    courseName: "",
-    courseCode: "",
-    grade: "",
+    name: "",
+    id: "",
+    department: "",
+    year: "",
+    semester: "",
   });
 
   const handleChange = (e) => {
@@ -15,12 +17,11 @@ const CourseModal = ({ onAddCourse, onClose, theme }) => {
   };
 
   const handleAddCourse = () => {
-    if (courseData.courseName && courseData.courseCode && courseData.grade) {
+    if (courseData.name && courseData.id && courseData.department) {
       onAddCourse(courseData);
-      setCourseData({ courseName: "", courseCode: "", grade: "" });
+      setCourseData({ name: "", id: "", department: "", year: "", semester: "" });
     }
   };
-
   return (
     <div className="fixed inset-0 flex items-center justify-center z-50">
       <div

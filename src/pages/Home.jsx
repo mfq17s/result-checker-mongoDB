@@ -20,14 +20,14 @@ const Home = () => {
     };
 
     const fetchTotalDepartments = async () => {
-      const departmentsCollection = collection(db, "department");
+      const departmentsCollection = collection(db, "departments");
       const departmentsSnapshot = await getDocs(departmentsCollection);
       const totalDepartments = departmentsSnapshot.size;
       setTotalDepartments(totalDepartments);
     };
 
     const fetchTotalCourses = async () => {
-      const coursesCollection = collection(db, "courses");
+      const coursesCollection = collection(db, "Courses");
       const coursesSnapshot = await getDocs(coursesCollection);
       const totalCourses = coursesSnapshot.size;
       setTotalCourses(totalCourses);

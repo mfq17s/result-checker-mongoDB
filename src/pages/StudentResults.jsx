@@ -4,7 +4,6 @@ import { useRef, useContext } from "react";
 import { useLocation } from "react-router-dom";
 import { ThemeContext } from "../App";
 
-
 function StudentResults() {
   const { theme } = useContext(ThemeContext);
   const location = useLocation();
@@ -83,7 +82,7 @@ function StudentResults() {
                     {result.courses.map((course, courseIndex) => (
                       <tr key={`${index}-${courseIndex}`}>
                         <td>{courseIndex + 1}</td>
-                        <td>{course.courseName}</td>
+                        <td>{course.name}</td>
                         <td>{course.courseId}</td>
                         <td>{course.grade}</td>
                         <td>{result.year}</td>

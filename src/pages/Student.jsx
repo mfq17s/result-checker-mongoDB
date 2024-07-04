@@ -117,7 +117,7 @@ const Student = () => {
           />
         )}
       </div>
-      <div className="flex flex-col items-center justify-end scale-[65%] sm:scale-50 gap-2">
+      <div className="flex flex-col items-center justify-end scale-[70%]  gap-2">
         <table>
           <thead>
             <tr>

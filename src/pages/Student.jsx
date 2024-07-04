@@ -103,7 +103,7 @@ const Student = () => {
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-75 scale-[65%]`}
+      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
     >
       <div><h1>Available STUDENTS</h1></div>
       
@@ -117,7 +117,7 @@ const Student = () => {
           />
         )}
       </div>
-      <div className="flex flex-col items-center justify-end scale-[65%] gap-2">
+      <div className="flex flex-col items-center justify-end scale-[65%] sm:scale-50 gap-2">
         <table>
           <thead>
             <tr>

@@ -103,8 +103,10 @@ const Student = () => {
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } flex justify-center items-center  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
+      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-75 scale-[65%]`}
     >
+      <div><h1>AVAILABLE STUDENTS</h1></div>
+      
       <div>
         {showModal && (
           <UpdateStudentModal

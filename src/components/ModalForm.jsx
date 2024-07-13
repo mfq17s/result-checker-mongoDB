@@ -116,11 +116,11 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
     }
   };
   return (
-    <div className="fixed inset-0 flex items-center justify-center z-50">
+    <div className="fixed inset-0 flex items-center justify-center  z-50">
       <div
         className={`${
           theme === "dark" ? "bg-black text-white" : "bg-white text-gray-800"
-        } p-8 rounded-lg shadow-lg max-w-3xl w-full scale-75 overflow-y-auto max-h-[80vh]`}
+        } p-8 rounded-lg shadow-lg max-w-3xl w-full scale-75  overflow-y-auto max-h-[80vh]`}
       >
         <h2 className="text-2xl font-bold mb-4 text-center">
           Register Student
@@ -166,7 +166,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600 " : "border-gray-400"
-              } p-2 rounded-md dark:text-black`}
+              } p-2 rounded-md dark:text-black `}
             />
           </div>
           <div>
@@ -181,7 +181,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -196,7 +196,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -226,7 +226,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -241,7 +241,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -318,7 +318,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -333,7 +333,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -348,7 +348,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
           <div>
@@ -393,7 +393,7 @@ const ModalForm = ({ onSubmit, onClose, theme }) => {
               onChange={handleChange}
               className={`w-full border ${
                 theme === "dark" ? "border-gray-600" : "border-gray-400"
-              } p-2 rounded-md`}
+              } p-2 rounded-md dark:text-black`}
             />
           </div>
 

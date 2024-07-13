@@ -1,9 +1,7 @@
-/* eslint-disable no-unused-vars */
 import { useEffect, useState, useContext } from "react";
 import {
   collection,
   getDocs,
-  deleteDoc,
   doc,
   addDoc,
   updateDoc,
@@ -12,6 +10,85 @@ import { ThemeContext } from "../App";
 import { db } from "../firebase/firebase";
 import UpdateCourseModal from "../components/UpdateCourseModal";
 import toast from "react-hot-toast";
+import DataTable from "react-data-table-component";
+import PropTypes from "prop-types";
+import { FaChevronDown, FaChevronRight } from 'react-icons/fa';
+import { dark } from "@mui/material/styles/createPalette";
+
+
+const DepartmentExpander = ({ data, handleUpdate,  }) => {
+  const [expandedYear, setExpandedYear] = useState(null);
+
+  return (
+    <div>
+      {Object.entries(data.years).map(([year, yearData]) => (
+        <div key={year}>
+          <button className="px-2.5 flex items-center gap-2" onClick={() => setExpandedYear(expandedYear === year ? null : year)}>
+            {expandedYear === year ? <FaChevronDown /> : <FaChevronRight />}
+            {year}
+          </button>
+          {expandedYear === year && (
+            <YearExpander data={yearData} handleUpdate={handleUpdate} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+
+const YearExpander = ({ data, handleUpdate }) => {
+  const [expandedSemester, setExpandedSemester] = useState(null);
+
+  return (
+    <div>
+      {Object.entries(data.semesters).map(([semester, semesterData]) => (
+        <div key={semester}>
+          <button className="px-2.5 flex items-center gap-2" onClick={() => setExpandedSemester(expandedSemester === semester ? null : semester)}>
+            {expandedSemester === semester ? <FaChevronDown /> : <FaChevronRight />}
+            {semester}
+          </button>
+          {expandedSemester === semester && (
+            <SemesterExpander data={semesterData} handleUpdate={handleUpdate} />
+          )}
+        </div>
+      ))}
+    </div>
+  );
+};
+
+const SemesterExpander = ({ data, handleUpdate }) => {
+  const columns = [
+    { name: "Course Name", selector: (row) => row.name },
+    { name: "Course Code", selector: (row) => row.id },
+    {
+      name: "Actions",
+      cell: (row) => (
+        <div className="flex gap-4">
+          <button
+            className="buttonStyle px-3"
+            onClick={() => handleUpdate(row)}
+          >
+            Update
+          </button>
+          
+        </div>
+      ),
+    },
+  ];
+
+  return (
+    <DataTable
+    className="h-[100vh] w-[100vw] py-10"
+      columns={columns}
+      data={data.courses}
+      pagination
+      paginationPerPage={10}
+      paginationRowsPerPageOptions={[5, 10, 20, 30]}
+      sortable
+    />
+  );
+};
 
 const Courses = () => {
   const { theme } = useContext(ThemeContext);
@@ -25,7 +102,7 @@ const Courses = () => {
       try {
         const coursesSnapshot = await getDocs(coursesCollection, {
           timeout: 60000,
-        }); // Increase timeout to 60 seconds
+        });
         const coursesData = coursesSnapshot.docs.map((doc) => ({
           id: doc.id,
           ...doc.data(),
@@ -47,14 +124,7 @@ const Courses = () => {
     setIsAddModalOpen(false);
   };
 
-  const handleDelete = async (id) => {
-    try {
-      await deleteDoc(doc(db, "Courses", id));
-      setCourses(courses.filter((course) => course.id !== id));
-    } catch (error) {
-      console.error("Error deleting course: ", error);
-    }
-  };
+ 
 
   const handleAddCourse = async (formData) => {
     try {
@@ -85,6 +155,7 @@ const Courses = () => {
             course.id === updatedCourse.id ? updatedCourse : course
           )
         );
+        setEditingCourse(null);
       } else {
         console.error("Invalid course ID");
         toast.error("Error updating course. Please try again.");
@@ -95,83 +166,102 @@ const Courses = () => {
     }
   };
 
+  const columns = [{ name: "Department", selector: (row) => row.department }];
+
+  const data = groupCourseData(courses);
 
   return (
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
+      } flex justify-center items-center flex-col h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[95%]`}
     >
       <div>
         <h1>Available Courses</h1>
       </div>
 
-      <div>
-        {(isAddModalOpen || editingCourse) && (
-          <UpdateCourseModal
-            onSubmit={isAddModalOpen ? handleAddCourse : handleUpdateConfirm}
-            onClose={
-              isAddModalOpen ? closeAddModal : () => setEditingCourse(null)
-            }
-            theme={theme}
-            course={
-              editingCourse || {
-                courseName: "",
-                courseCode: "",
-                department: "",
-              }
-            }
-          />
-        )}
-      </div>
-      <div className="flex flex-col items-center justify-end scale-[70%]  gap-2">
-        <table>
-          <thead>
-            <tr>
-              <th>Course Name</th>
-              <th>Course Code</th>
-              <th>Year</th>
-              <th>Semester</th>
-              <th>Department</th>
-              {/* Add more columns for other course fields */}
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {courses.map((course) => (
-              <tr key={course.id}>
-                <td>{course.name}</td>
-                <td>{course.id}</td>
-                <td>{course.year}</td>
-                <td>{course.semester}</td>
-                <td>{course.department}</td>
+      {(isAddModalOpen || editingCourse) && (
+        <UpdateCourseModal
+          onSubmit={isAddModalOpen ? handleAddCourse : handleUpdateConfirm}
+          onClose={
+            isAddModalOpen ? closeAddModal : () => setEditingCourse(null)
+          }
+          theme={theme}
+          course={
+            editingCourse || { courseName: "", courseCode: "", department: "" }
+          }
+        />
+      )}
+<div className="table-wrapper " style={{ width: '85%', overflow: 'auto', }}>
+  <DataTable
+    className={`darkmode ${
+      theme === "dark" ? "bg-black text-white" : ""
+    } text-sm`}
+    columns={columns}
+    data={data}
+    expandableRows
+    expandableRowsComponent={({ data }) => (
+      <DepartmentExpander
+        theme={dark}
+        data={data}
+        handleUpdate={handleUpdate}
+        
+      />
+    )}
+  />
+</div>
 
-                <td className="flex  gap-4 ">
-                  <button
-                    className="buttonStyle px-3"
-                    onClick={() => handleUpdate(course)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="buttonStyle px-3"
-                    onClick={() => handleDelete(course.id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="flex justify-center mt-11">
-          <button onClick={openAddModal} className="buttonStyle p-4  ">
-            Add Course
-          </button>
-        </div>
+      <div className="flex justify-center mt-11">
+        <button onClick={openAddModal} className="buttonStyle p-4">
+          Add Course
+        </button>
       </div>
     </div>
   );
+};
+
+const groupCourseData = (courses) => {
+  const groupedData = {};
+  courses.forEach(course => {
+    if (!groupedData[course.department]) {
+      groupedData[course.department] = { years: {} };
+    }
+    const yearKey = `Year: ${course.year}`;
+    const semesterKey = `Semester: ${course.semester}`;
+    if (!groupedData[course.department].years[yearKey]) {
+      groupedData[course.department].years[yearKey] = { semesters: {} };
+    }
+    if (!groupedData[course.department].years[yearKey].semesters[semesterKey]) {
+      groupedData[course.department].years[yearKey].semesters[semesterKey] = { courses: [] };
+    }
+    groupedData[course.department].years[yearKey].semesters[semesterKey].courses.push(course);
+  });
+  return Object.entries(groupedData).map(([department, data]) => ({ department, ...data }));
+};
+
+
+DepartmentExpander.propTypes = {
+  data: PropTypes.shape({
+    years: PropTypes.object.isRequired,
+  }).isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+};
+
+YearExpander.propTypes = {
+  data: PropTypes.shape({
+    semesters: PropTypes.object.isRequired,
+  }).isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
+};
+
+SemesterExpander.propTypes = {
+  data: PropTypes.shape({
+    courses: PropTypes.array.isRequired,
+  }).isRequired,
+  handleUpdate: PropTypes.func.isRequired,
+  handleDelete: PropTypes.func.isRequired,
 };
 
 export default Courses;

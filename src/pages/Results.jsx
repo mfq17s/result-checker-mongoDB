@@ -60,7 +60,7 @@ function Results() {
           const data = doc.data();
           const courses = await Promise.all(
             data.courses.map(async (course) => {
-              const courseDoc = await getDoc(doc(db, "Courses", course.courseId));
+              const courseDoc = await getDoc((db, "Courses", course.courseId));
               return {
                 ...course,
                 name: courseDoc.exists() ? courseDoc.data().name : "",

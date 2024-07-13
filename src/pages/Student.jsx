@@ -15,6 +15,8 @@ import UpdateStudentModal from "../components/UpdateStudentModal";
 
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import DataTable from 'react-data-table-component';
+
 
 const Student = () => {
   const { theme } = useContext(ThemeContext);
@@ -99,13 +101,52 @@ const Student = () => {
     }
   };
 
+  const columns = [
+    {
+      name: 'First Name',
+      selector: row => row.firstName,
+      sortable: true,
+    },
+    {
+      name: 'Last Name',
+      selector: row => row.lastName,
+      sortable: true,
+    },
+    {
+      name: 'Department',
+      selector: row => row.department,
+      sortable: true,
+    },
+    {
+      name: 'Email',
+      selector: row => row.emailAddress,
+      sortable: true,
+    },
+    {
+      name: 'Index Number',
+      selector: row => row.indexNumber,
+      sortable: true,
+    },
+    {
+      name: 'Actions',
+      cell: row => (
+        <button
+          className="buttonStyle px-3"
+          onClick={() => handleUpdate(row)}
+        >
+          Update
+        </button>
+      ),
+    },
+  ];
+
   return (
     <div
       className={`${
         theme === "dark" ? "dark" : "light"
-      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] darkmode sm:scale-100 scale-[65%]`}
+      } flex justify-center items-center flex-col  h-[100vh] w-[100vw] mt-10 darkmode sm:scale-100 scale-[90%]`}
     >
-      <div><h1>Available STUDENTS</h1></div>
+      <div><h1>Registered Students</h1></div>
       
       <div>
         {showModal && (
@@ -117,44 +158,27 @@ const Student = () => {
           />
         )}
       </div>
-      <div className="flex flex-col items-center justify-end scale-[70%]  gap-2">
-        <table>
-          <thead>
-            <tr>
-              <th>First Name</th>
-              <th>Last Name</th>
-              <th>Department</th>
-              <th>Email</th>
-              <th>Index Number</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {students.map((student) => (
-              <tr key={student.id}>
-                <td>{student.firstName}</td>
-                <td>{student.lastName}</td>
-                <td>{student.department}</td>
-                <td>{student.emailAddress}</td>
-                <td>{student.indexNumber}</td>
-                <td className="flex  gap-4 ">
-                  <button
-                    className="buttonStyle px-3"
-                    onClick={() => handleUpdate(student)}
-                  >
-                    Update
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      
+      <div className="flex flex-col items-center justify-end scale-[80%] dark:bg-black  gap-2 darkmode">
+       
+        
+      <DataTable
+    
+        columns={columns}
+        data={students}
+        pagination
+        paginationPerPage={5}
+        paginationRowsPerPageOptions={[5, 10, 20, 30]}
+        sortable
+      />
         <div className="flex justify-center mt-11">
           <button onClick={openModal} className="buttonStyle p-4  ">
             Register Student
           </button>
         </div>
       </div>
+
+      
 
       {isModalOpen && (
         <ModalForm

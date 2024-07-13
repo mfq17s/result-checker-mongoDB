@@ -6,7 +6,7 @@ import { ThemeContext } from "../App";
 
 const groupResultData = (results) => {
   const groupedData = {};
-  results.forEach(result => {
+  results.forEach((result) => {
     const yearKey = `Year ${result.year}`;
     const semesterKey = `Semester ${result.semester}`;
     if (!groupedData[yearKey]) {
@@ -20,7 +20,6 @@ const groupResultData = (results) => {
   return groupedData;
 };
 
-
 function StudentResults() {
   const { theme } = useContext(ThemeContext);
   const location = useLocation();
@@ -32,13 +31,13 @@ function StudentResults() {
     ? allResults.filter((result) => result.indexNumber === indexNumber)
     : allResults;
 
-    const groupedResults = groupResultData(results);
+  const groupedResults = groupResultData(results);
 
   const componentRef = useRef();
   const handlePrint = useReactToPrint({
     content: () => componentRef.current,
   });
-
+  console.log(groupedResults);
   return (
     <div
       className={`${
@@ -78,31 +77,33 @@ function StudentResults() {
             Object.entries(groupedResults).map(([year, yearData]) => (
               <div key={year} className="mt-10">
                 <h3 className="text-lg font-bold">{year}</h3>
-                {Object.entries(yearData.semesters).map(([semester, semesterData]) => (
-                  <div key={semester} className="mt-5">
-                    <h4 className="text-md font-semibold">{semester}</h4>
-                    <table className="table-auto text-xs w-full my-4">
-                      <thead>
-                        <tr>
-                          <th>#</th>
-                          <th>Course Name</th>
-                          <th>Course Code</th>
-                          <th>Grade</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {semesterData.courses.map((course, courseIndex) => (
-                          <tr key={courseIndex}>
-                            <td>{courseIndex + 1}</td>
-                            <td>{course.name}</td>
-                            <td>{course.courseId}</td>
-                            <td>{course.grade}</td>
+                {Object.entries(yearData.semesters).map(
+                  ([semester, semesterData]) => (
+                    <div key={semester} className="mt-5">
+                      <h4 className="text-md font-semibold">{semester}</h4>
+                      <table className="table-auto text-xs w-full my-4">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th>Course Name</th>
+                            <th>Course Code</th>
+                            <th>Grade</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                ))}
+                        </thead>
+                        <tbody>
+                          {semesterData.courses.map((course, courseIndex) => (
+                            <tr key={courseIndex}>
+                              <td>{courseIndex + 1}</td>
+                              <td>{course.name}</td>
+                              <td>{course.courseId}</td>
+                              <td>{course.grade}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )
+                )}
               </div>
             ))
           ) : (

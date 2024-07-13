@@ -55,33 +55,18 @@ function Results() {
     try {
       const resultsCollectionRef = collection(db, "results");
       const querySnapshot = await getDocs(resultsCollectionRef);
-      const resultsData = await Promise.all(
-        querySnapshot.docs.map(async (doc) => {
-          const data = doc.data();
-          const courses = await Promise.all(
-            data.courses.map(async (course) => {
-              const courseDoc = await getDoc((db, "Courses", course.courseId));
-              return {
-                ...course,
-                name: courseDoc.exists() ? courseDoc.data().name : "",
-              };
-            })
-          );
-          return { ...data, courses };
-        })
-      );
+      const resultsData = querySnapshot.docs.map((doc) => doc.data());
       setResults(resultsData);
     } catch (error) {
       console.error("Error fetching results data: ", error);
       toast.error("Error fetching results data");
     }
   };
-  
 
   const addResult = async (e) => {
     e.preventDefault();
     const toastLoadingId = toast.loading("Adding result!");
-  
+
     try {
       const resultsCollectionRef = collection(db, "results");
       const querySnapshot = await getDocs(
@@ -90,16 +75,16 @@ function Results() {
           where("indexNumber", "==", newResult.indexNumber)
         )
       );
-  
+
       const existingResults = querySnapshot.docs.map((doc) => doc.data());
-      const existingCourseIds = existingResults.flatMap(
-        (result) => result.courses.map((course) => course.courseId)
+      const existingCourseIds = existingResults.flatMap((result) =>
+        result.courses.map((course) => course.courseId)
       );
-  
+
       const duplicateCourseIds = newResult.courses
         .map((course) => course.courseId)
         .filter((courseId) => existingCourseIds.includes(courseId));
-  
+
       if (duplicateCourseIds.length > 0) {
         const duplicateCourseNames = await Promise.all(
           duplicateCourseIds.map(async (courseId) => {
@@ -108,9 +93,11 @@ function Results() {
             return courseDocSnapshot.exists() ? courseDocSnapshot.id : courseId;
           })
         );
-  
+
         toast.error(
-          `Index number ${newResult.indexNumber} already has results declared for the following courses: ${duplicateCourseNames.join(
+          `Index number ${
+            newResult.indexNumber
+          } already has results declared for the following courses: ${duplicateCourseNames.join(
             ", "
           )}`,
           {
@@ -119,7 +106,7 @@ function Results() {
         );
         return;
       }
-  
+
       if (querySnapshot.empty) {
         // If no document exists for the given indexNumber, create a new one
         await addDoc(resultsCollectionRef, newResult);
@@ -130,20 +117,20 @@ function Results() {
         // If a document exists for the given indexNumber, update it
         const existingDoc = querySnapshot.docs[0];
         const existingData = existingDoc.data();
-  
+
         const updatedData = {
           ...existingData,
           courses: [...existingData.courses, ...newResult.courses],
         };
-  
+
         await updateDoc(existingDoc.ref, updatedData);
         toast.success("Results data updated successfully!", {
           id: toastLoadingId,
         });
       }
-  
+
       console.log("Results data added/updated successfully!");
-  
+
       setNewResult({
         indexNumber: "",
         academicYear: "",
@@ -160,9 +147,6 @@ function Results() {
       });
     }
   };
-  
-  
-  
 
   const editResult = async (indexNumber, academicYear, updatedResult) => {
     try {
@@ -261,7 +245,7 @@ function Results() {
     ],
     []
   );
-
+  console.log(results);
   return (
     <div className="flex w-[95vw] justify-center items-center flex-col  ">
       <div className="bg-white text-gray-800 p-6 border rounded-lg shadow-xl dark:shadow-white dark:shadow-inner w-[30rem] sm:scale-100 scale-75 lg:scale-[65%] darkmode">
@@ -363,7 +347,6 @@ function Results() {
                 />
               </div>
 
-             
               <div>
                 <label htmlFor={`grade-${index}`} className="block mb-2">
                   Grade
